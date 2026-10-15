@@ -1,0 +1,1804 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>For My Beloved ❤️</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&family=Press+Start+2P&family=VT323&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+      :root {
+        --bg-color: #fce4ec;
+        --card-bg: rgba(255, 255, 255, 0.85);
+        --border-color: #f48fb1;
+        --accent-pink: #d81b60;
+        --main-pink: #ec407a;
+        --text-dark: #4a1525;
+        --text-sub: #ad1457;
+
+        /* Dynamic Photobooth Theme Variables */
+        --pb-bg: #fff0f5;
+        --pb-border: #f48fb1;
+        --pb-text: #d81b60;
+        --pb-font: "Cormorant Garamond", serif;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      body {
+        background-color: #f8bbd0;
+        color: var(--text-dark);
+        font-family: "Poppins", sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 10px;
+      }
+
+      .serif {
+        font-family: "Cormorant Garamond", serif;
+      }
+
+      /* Mobile Frame Container */
+      .app-container {
+        width: 100%;
+        max-width: 420px;
+        background: linear-gradient(180deg, #fff0f5 0%, #fce4ec 100%);
+        border-radius: 28px;
+        padding: 25px 20px;
+        box-shadow: 0 15px 35px rgba(216, 27, 96, 0.15);
+        border: 2px solid #f8bbd0;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* 1. SCREEN PIN LOCK */
+      #pin-screen {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 20px 0;
+      }
+
+      .lock-icon {
+        font-size: 36px;
+        margin-bottom: 10px;
+      }
+      .pin-header {
+        font-size: 1.3rem;
+        color: var(--accent-pink);
+        font-style: italic;
+      }
+      .pin-title {
+        font-size: 1.7rem;
+        margin-bottom: 6px;
+        color: var(--text-dark);
+      }
+      .sub-text {
+        font-size: 0.8rem;
+        color: var(--text-sub);
+        margin-bottom: 25px;
+      }
+
+      .pin-display {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 30px;
+      }
+      .dot {
+        width: 13px;
+        height: 13px;
+        border: 2px solid var(--main-pink);
+        border-radius: 50%;
+        transition: all 0.2s;
+      }
+      .dot.active {
+        background-color: var(--main-pink);
+        box-shadow: 0 0 8px var(--main-pink);
+      }
+
+      .keypad {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        width: 100%;
+        max-width: 250px;
+      }
+
+      .btn-key {
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid var(--border-color);
+        color: var(--text-dark);
+        font-size: 1.2rem;
+        font-weight: 500;
+        border-radius: 50%;
+        aspect-ratio: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+      }
+      .btn-key:active {
+        background: var(--main-pink);
+        color: white;
+      }
+      .error-msg {
+        color: #d32f2f;
+        font-size: 0.8rem;
+        margin-top: 15px;
+        height: 20px;
+      }
+
+      /* 2. SCREEN GIFT SURPRISE */
+      #gift-screen {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 40px 0;
+      }
+      .gift-box {
+        font-size: 80px;
+        cursor: pointer;
+        animation: float 2s infinite ease-in-out;
+        margin: 30px 0;
+        filter: drop-shadow(0 10px 15px rgba(236, 64, 122, 0.3));
+      }
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-12px) rotate(3deg);
+        }
+      }
+
+      /* 3. MAIN CONTENT */
+      #content-screen {
+        display: none;
+        animation: fadeIn 1s ease;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(15px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Music Player */
+      .music-player {
+        position: sticky;
+        top: 10px;
+        z-index: 50;
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid var(--border-color);
+        border-radius: 14px;
+        padding: 10px 15px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 25px;
+        backdrop-filter: blur(8px);
+        box-shadow: 0 4px 15px rgba(236, 64, 122, 0.1);
+      }
+      .play-btn {
+        background: var(--main-pink);
+        border: none;
+        color: white;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 0.8rem;
+      }
+
+      .header-tag {
+        font-style: italic;
+        color: var(--text-sub);
+        font-size: 0.95rem;
+        text-align: center;
+        display: block;
+      }
+      .main-title {
+        font-size: 2.2rem;
+        color: var(--accent-pink);
+        text-align: center;
+        margin-bottom: 20px;
+        font-weight: 600;
+      }
+
+      /* COUNTER CARD */
+      .counter-card {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.9) 0%,
+          rgba(252, 228, 236, 0.9) 100%
+        );
+        border: 1.5px solid var(--border-color);
+        border-radius: 18px;
+        padding: 15px;
+        text-align: center;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 12px rgba(236, 64, 122, 0.1);
+      }
+      .counter-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        margin-top: 10px;
+      }
+      .counter-item {
+        background: #fff;
+        padding: 8px;
+        border-radius: 10px;
+        border: 1px solid var(--border-color);
+      }
+      .counter-num {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--accent-pink);
+      }
+      .counter-unit {
+        font-size: 0.65rem;
+        color: var(--text-sub);
+      }
+
+      .letter-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 20px;
+        font-size: 0.88rem;
+        line-height: 1.7;
+        color: var(--text-dark);
+        margin-bottom: 25px;
+        text-align: justify;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+      }
+
+      .gdrive-video-container {
+        position: relative;
+        width: 100%;
+        padding-bottom: 56.25%; /* Rasio 16:9 */
+        height: 0;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 2px solid var(--border-color);
+        margin-bottom: 25px;
+        box-shadow: 0 6px 15px rgba(236, 64, 122, 0.15);
+        background: #000;
+      }
+
+      .gdrive-video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+      }
+
+      .section-header {
+        text-align: center;
+        margin: 35px 0 20px 0;
+      }
+      .section-tag {
+        font-style: italic;
+        color: var(--text-sub);
+        font-size: 0.85rem;
+        display: block;
+      }
+      .section-title {
+        font-size: 1.6rem;
+        color: var(--accent-pink);
+        font-weight: 600;
+      }
+
+      /* TIMELINE ACCORDION */
+      .timeline-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 16px;
+        margin-bottom: 14px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        position: relative;
+        overflow: hidden;
+      }
+      .timeline-tag {
+        font-style: italic;
+        font-size: 0.75rem;
+        color: var(--main-pink);
+        display: block;
+      }
+      .timeline-head {
+        font-size: 1.05rem;
+        color: var(--accent-pink);
+        margin: 2px 0 4px 0;
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .arrow-icon {
+        font-size: 0.8rem;
+        transition: transform 0.4s ease;
+      }
+      .timeline-body {
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        font-size: 0.83rem;
+        color: var(--text-dark);
+        line-height: 1.6;
+        transition:
+          max-height 0.5s cubic-bezier(0, 1, 0, 1),
+          opacity 0.4s ease;
+      }
+      .timeline-card.active {
+        background: #fff;
+        border-color: var(--accent-pink);
+      }
+      .timeline-card.active .timeline-body {
+        max-height: 200px;
+        opacity: 1;
+        margin-top: 10px;
+        padding-top: 8px;
+        border-top: 1px stroke #fce4ec;
+      }
+      .timeline-card.active .arrow-icon {
+        transform: rotate(180deg);
+      }
+
+      /* GARDEN OF WISHES */
+      .flower-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-top: 15px;
+      }
+      .flower-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 20px 10px;
+        text-align: center;
+        cursor: pointer;
+        position: relative;
+      }
+      .flower-card:active {
+        transform: scale(0.95);
+      }
+      .flower-icon {
+        font-size: 42px;
+        margin-bottom: 8px;
+        display: inline-block;
+        transition: transform 0.3s;
+      }
+
+      .flower-card.bloom-pop .flower-icon {
+        animation: anim-pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      .flower-card.bloom-spin .flower-icon {
+        animation: anim-spin 0.7s ease-out;
+      }
+      .flower-card.bloom-shake .flower-icon {
+        animation: anim-shake 0.6s ease-in-out;
+      }
+      .flower-card.bloom-pulse .flower-icon {
+        animation: anim-pulse 0.6s ease-out;
+      }
+
+      @keyframes anim-pop {
+        0% {
+          transform: scale(0.5);
+        }
+        60% {
+          transform: scale(1.35) rotate(-10deg);
+        }
+        100% {
+          transform: scale(1) rotate(0);
+        }
+      }
+      @keyframes anim-spin {
+        0% {
+          transform: scale(0.3) rotate(-180deg);
+        }
+        100% {
+          transform: scale(1) rotate(360deg);
+        }
+      }
+      @keyframes anim-shake {
+        0% {
+          transform: translateY(0);
+        }
+        25% {
+          transform: translateY(-10px) rotate(-12deg);
+        }
+        50% {
+          transform: translateY(0) rotate(12deg);
+        }
+        75% {
+          transform: translateY(-5px) rotate(-6deg);
+        }
+        100% {
+          transform: translateY(0) rotate(0);
+        }
+      }
+      @keyframes anim-pulse {
+        0% {
+          transform: scale(0.8);
+        }
+        50% {
+          transform: scale(1.4);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      .bloom-particle {
+        position: absolute;
+        left: 50%;
+        top: 31px;
+        font-size: 18px;
+        pointer-events: none;
+        opacity: 0;
+        z-index: 2;
+        animation: petal-burst 0.85s ease-out forwards;
+        animation-delay: var(--delay);
+      }
+      @keyframes petal-burst {
+        0% {
+          opacity: 0;
+          transform: translate(-50%, 0) scale(0.4) rotate(0);
+        }
+        20% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+          transform: translate(calc(-50% + var(--x)), var(--y)) scale(0.95)
+            rotate(var(--rotate));
+        }
+      }
+
+      /* PHOTOBOOTH CONTROLS */
+      .photobooth-box {
+        background: #fff;
+        border: 2px solid var(--border-color);
+        border-radius: 18px;
+        padding: 15px;
+        text-align: center;
+        margin-top: 15px;
+        box-shadow: 0 6px 20px rgba(236, 64, 122, 0.1);
+      }
+
+      .selector-group {
+        margin-bottom: 12px;
+        text-align: left;
+      }
+      .selector-label {
+        font-size: 0.75rem;
+        color: var(--text-sub);
+        font-weight: 600;
+        margin-bottom: 4px;
+        display: block;
+      }
+      .pb-select {
+        width: 100%;
+        padding: 8px 12px;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        background: #fff0f5;
+        font-size: 0.82rem;
+        color: var(--text-dark);
+        outline: none;
+        font-family: inherit;
+      }
+
+      .camera-preview {
+        width: 100%;
+        height: 220px;
+        background: #222;
+        border-radius: 12px;
+        object-fit: cover;
+        display: none;
+        margin-bottom: 12px;
+      }
+
+      /* PHOTOSTRIP CONTAINER WITH DYNAMIC THEME COLORS & BORDERS */
+      .photobooth-strip {
+        display: flex;
+        gap: 10px;
+        background: var(--pb-bg);
+        padding: 14px;
+        border: 3px solid var(--pb-border);
+        border-radius: 14px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        margin-bottom: 12px;
+        transition: all 0.3s ease;
+        position: relative;
+      }
+
+      .frame-wrapper {
+        position: relative;
+        width: 100%;
+      }
+
+      .frame-decor-tl,
+      .frame-decor-tr,
+      .frame-decor-bl,
+      .frame-decor-br {
+        position: absolute;
+        font-size: 16px;
+        z-index: 10;
+        pointer-events: none;
+      }
+      .frame-decor-tl {
+        top: 4px;
+        left: 6px;
+      }
+      .frame-decor-tr {
+        top: 4px;
+        right: 6px;
+      }
+      .frame-decor-bl {
+        bottom: 6px;
+        left: 6px;
+      }
+      .frame-decor-br {
+        bottom: 6px;
+        right: 6px;
+      }
+
+      /* Layout 1: Vertical 3 Strip */
+      .photobooth-strip.layout-strip {
+        flex-direction: column;
+      }
+      .photobooth-strip.layout-strip img {
+        width: 100%;
+        height: 130px;
+        object-fit: cover;
+        border-radius: 6px;
+        border: 2px solid var(--pb-border);
+      }
+
+      /* Layout 2: Grid 2x2 */
+      .photobooth-strip.layout-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+      .photobooth-strip.layout-grid img {
+        width: 100%;
+        height: 110px;
+        object-fit: cover;
+        border-radius: 6px;
+        border: 2px solid var(--pb-border);
+      }
+      .photobooth-strip.layout-grid .photobooth-footer-text {
+        grid-column: span 2;
+      }
+
+      /* Layout 3: Polaroid */
+      .photobooth-strip.layout-polaroid {
+        flex-direction: column;
+        padding: 20px 20px 30px 20px;
+        background: #ffffff !important;
+        border: 1px solid #ddd !important;
+      }
+      .photobooth-strip.layout-polaroid img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        border-radius: 2px;
+        border: 1px solid #eee;
+      }
+
+      .photobooth-footer-text {
+        font-size: 0.85rem;
+        color: var(--pb-text);
+        font-style: italic;
+        margin-top: 6px;
+        font-weight: 600;
+        font-family: var(--pb-font);
+        transition: all 0.3s ease;
+        z-index: 5;
+      }
+
+      .btn-snap,
+      .btn-action {
+        background: var(--accent-pink);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 25px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        box-shadow: 0 4px 12px rgba(216, 27, 96, 0.2);
+        margin-bottom: 8px;
+      }
+
+      .btn-download {
+        background: #2e7d32;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        display: none;
+        box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2);
+      }
+
+      .timer-badge {
+        font-size: 1.5rem;
+        color: var(--accent-pink);
+        font-weight: bold;
+        margin: 8px 0;
+        display: none;
+      }
+
+      /* REASON & VOUCHERS */
+      .reason-box {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 18px;
+        padding: 20px;
+        text-align: center;
+        margin-top: 15px;
+      }
+      .reason-text {
+        font-size: 0.9rem;
+        color: var(--accent-pink);
+        min-height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-style: italic;
+        margin-bottom: 15px;
+      }
+
+      .coupon-card {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.9) 0%,
+          rgba(252, 228, 236, 0.9) 100%
+        );
+        border: 1.5px dashed var(--main-pink);
+        border-radius: 16px;
+        padding: 15px;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .coupon-btn {
+        background: var(--main-pink);
+        color: white;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        cursor: pointer;
+        font-weight: 500;
+      }
+      .coupon-btn.claimed {
+        background: #aaa;
+        color: #fff;
+      }
+
+      /* REPLY FORM & GALLERY */
+      .reply-box {
+        background: #fff;
+        border: 1.5px solid var(--border-color);
+        border-radius: 18px;
+        padding: 18px;
+        margin-top: 15px;
+      }
+      .reply-textarea {
+        width: 100%;
+        height: 90px;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 10px;
+        font-family: inherit;
+        font-size: 0.85rem;
+        margin-bottom: 10px;
+        resize: none;
+        outline: none;
+      }
+
+      .gallery-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+      .photo-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 12px;
+        text-align: center;
+      }
+      .photo-card img {
+        width: 100%;
+        border-radius: 12px;
+        object-fit: cover;
+        max-height: 280px;
+        background-color: #f8bbd0;
+      }
+      .photo-caption {
+        font-style: italic;
+        font-size: 0.85rem;
+        color: var(--text-sub);
+        margin-top: 8px;
+      }
+
+      /* MODAL */
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 200;
+        padding: 20px;
+        backdrop-filter: blur(4px);
+      }
+      .modal-content {
+        background: #fff;
+        border: 2px solid var(--main-pink);
+        border-radius: 20px;
+        padding: 22px;
+        width: 100%;
+        max-width: 350px;
+        text-align: center;
+        animation: pop 0.3s ease-out;
+      }
+      @keyframes pop {
+        from {
+          transform: scale(0.8);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+      .modal-btn {
+        background: var(--main-pink);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 20px;
+        margin-top: 15px;
+        cursor: pointer;
+        font-size: 0.85rem;
+      }
+
+      .footer {
+        text-align: center;
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border-color);
+      }
+      .footer-sig {
+        font-size: 1.3rem;
+        color: var(--accent-pink);
+        margin-top: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- Audio Player -->
+      <audio id="bg-music" loop>
+        <source src="assets/serta mulia.mp3" type="audio/mpeg" />
+      </audio>
+
+      <!-- 1. PIN LOCK -->
+      <div id="pin-screen">
+        <div class="lock-icon">🔒</div>
+        <span class="pin-header serif">Especially for you</span>
+        <h2 class="pin-title serif">Enter Our Secret Code</h2>
+        <p class="sub-text">
+          Enter the 6-digit number for your special date.✨
+        </p>
+
+        <div class="pin-display">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+
+        <div class="keypad">
+          <button class="btn-key" onclick="pressKey('1')">1</button>
+          <button class="btn-key" onclick="pressKey('2')">2</button>
+          <button class="btn-key" onclick="pressKey('3')">3</button>
+          <button class="btn-key" onclick="pressKey('4')">4</button>
+          <button class="btn-key" onclick="pressKey('5')">5</button>
+          <button class="btn-key" onclick="pressKey('6')">6</button>
+          <button class="btn-key" onclick="pressKey('7')">7</button>
+          <button class="btn-key" onclick="pressKey('8')">8</button>
+          <button class="btn-key" onclick="pressKey('9')">9</button>
+          <button class="btn-key" onclick="clearPin()">C</button>
+          <button class="btn-key" onclick="pressKey('0')">0</button>
+          <button class="btn-key" onclick="deleteKey()">⌫</button>
+        </div>
+        <div class="error-msg" id="error-msg"></div>
+      </div>
+
+      <!-- 2. GIFT SURPRISE -->
+      <div id="gift-screen">
+        <span class="pin-header serif">a surprise for you</span>
+        <h2 class="serif" style="font-size: 1.8rem; color: var(--accent-pink)">
+          Tap to Open Your Surprise
+        </h2>
+        <div class="gift-box" onclick="openGift()">🎁</div>
+        <p class="sub-text">Open this gift to see a special message ✨</p>
+      </div>
+
+      <!-- 3. MAIN CONTENT -->
+      <div id="content-screen">
+        <div class="music-player">
+          <button class="play-btn" id="play-toggle" onclick="toggleMusic()">
+            ⏸
+          </button>
+          <div style="font-size: 0.75rem; text-align: left">
+            <div style="color: var(--text-dark); font-weight: 600">
+              Serta Mulia - Sal Priadi
+            </div>
+            <div style="color: var(--text-sub)">Playing for you ❤️</div>
+          </div>
+        </div>
+
+        <span class="header-tag serif"
+          >a birthday letter, straight from my heart 🌸</span
+        >
+        <h1 class="main-title serif">Happy Birthday, My Love</h1>
+
+        <!-- COUNTER -->
+        <div class="counter-card">
+          <span
+            class="serif"
+            style="
+              font-size: 0.85rem;
+              color: var(--text-sub);
+              font-style: italic;
+            "
+            >We have been together for</span
+          >
+          <div class="counter-grid">
+            <div class="counter-item">
+              <div class="counter-num" id="cnt-days">0</div>
+              <div class="counter-unit">Days</div>
+            </div>
+            <div class="counter-item">
+              <div class="counter-num" id="cnt-hours">0</div>
+              <div class="counter-unit">Hours</div>
+            </div>
+            <div class="counter-item">
+              <div class="counter-num" id="cnt-mins">0</div>
+              <div class="counter-unit">Mins</div>
+            </div>
+            <div class="counter-item">
+              <div class="counter-num" id="cnt-secs">0</div>
+              <div class="counter-unit">Secs</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="letter-card">
+          Today is truly special, not just because you were born, but because
+          the world has become a far better place with you in it. Thank you for
+          growing into such a warm-hearted person, for striving tirelessly to
+          make your dreams come true, and for persevering through every step of
+          life’s incredible journey. Celebrating your birthday over these past
+          eight years has always been a cherished experience for me. May this
+          year bring you even more happiness, laughter, and sweet rewards for
+          all your hard work! ❤️
+        </div>
+
+        <!-- VIDEO MESSAGE GOOGLE DRIVE -->
+        <div class="section-header">
+          <span class="section-tag serif">a special video for you</span>
+          <h2 class="section-title serif">Video Message</h2>
+        </div>
+
+        <div class="gdrive-video-container">
+          <!-- Ganti ID_FILE_DRIVE_KAMU dengan ID file video dari Google Drive -->
+          <iframe
+            src="https://drive.google.com/file/d/1Pzv9KhZsMifKIknTAppAvj1kNCBh-F-n/preview"
+            allow="autoplay"
+          ></iframe>
+        </div>
+
+        <!-- OUR STORY -->
+        <div class="section-header">
+          <span class="section-tag serif">a little bit of us</span>
+          <h2 class="section-title serif">Our Story</h2>
+        </div>
+
+        <div class="timeline-card" onclick="toggleTimeline(this)">
+          <span class="timeline-tag serif">the first hello</span>
+          <div class="timeline-head serif">
+            <span>The Beginning of the Universe</span
+            ><span class="arrow-icon">▼</span>
+          </div>
+          <div class="timeline-body">
+            At first, we only knew of each other back in preschool. There were
+            no romantic feelings at the time—it never even crossed my mind that
+            our paths would lead us this far together. ✨
+          </div>
+        </div>
+
+        <div class="timeline-card" onclick="toggleTimeline(this)">
+          <span class="timeline-tag serif">closer than ever</span>
+          <div class="timeline-head serif">
+            <span>Our Time Drawing Near</span><span class="arrow-icon">▼</span>
+          </div>
+          <div class="timeline-body">
+            The turning point came in eighth grade. What started as casual,
+            increasingly engaging chats gradually turned you into the reason I
+            smiled every day—until we finally decided to go out together. ❤️
+          </div>
+        </div>
+
+        <div class="timeline-card" onclick="toggleTimeline(this)">
+          <span class="timeline-tag serif">right here, right now</span>
+          <div class="timeline-head serif">
+            <span>To This Day</span><span class="arrow-icon">▼</span>
+          </div>
+          <div class="timeline-body">
+            It’s hard to believe—from our preschool days and middle school puppy
+            love to now, here we are in our seventh semester of college, having
+            celebrated your birthday together for eight years. Thank you for
+            always hanging in there, fighting for your dreams, and growing into
+            such an amazing person. 🥂
+          </div>
+        </div>
+
+        <!-- WISHES -->
+        <div class="section-header">
+          <span class="section-tag serif">small wishes for you</span>
+          <h2 class="section-title serif">Garden of Wishes</h2>
+        </div>
+        <p class="sub-text" style="text-align: center; margin-bottom: 10px">
+          Tap the flowers to bloom and see my wishes ✨
+        </p>
+
+        <div class="flower-grid">
+          <div
+            class="flower-card"
+            onclick="
+              bloomFlower(
+                this,
+                'bloom-pop',
+                'Rose Prayer 🌹',
+                'May you always be blessed with good health, smooth sailing in every step you take, and a long life—so that I have more time to keep loving you and celebrating every one of your future birthdays. 🙏',
+              )
+            "
+          >
+            <div class="flower-icon">🌹</div>
+            <div class="serif" style="color: var(--accent-pink)">Health</div>
+          </div>
+          <div
+            class="flower-card"
+            onclick="
+              bloomFlower(
+                this,
+                'bloom-spin',
+                'Cherry Blossom Prayer 🌸',
+                'I hope all your dreams and big plans for this year come true one by one, my love. Trust the process, because I’m always here believing in you and rooting for you every step of the way. ✨',
+              )
+            "
+          >
+            <div class="flower-icon">🌸</div>
+            <div class="serif" style="color: var(--accent-pink)">Dreams</div>
+          </div>
+          <div
+            class="flower-card"
+            onclick="
+              bloomFlower(
+                this,
+                'bloom-shake',
+                'Sunflower Prayer 🌻',
+                'May your days always be filled with laughter, wrapped in warmth, and surrounded by good people—myself included, as I will always strive to be your greatest reason for happiness. ☀️',
+              )
+            "
+          >
+            <div class="flower-icon">🌻</div>
+            <div class="serif" style="color: var(--accent-pink)">Happiness</div>
+          </div>
+          <div
+            class="flower-card"
+            onclick="
+              bloomFlower(
+                this,
+                'bloom-pulse',
+                'Hibiscus Prayer 🌺',
+                'May the love between us always find a way to grow warmer with each passing day. Thank you for your willingness to keep learning, hanging in there, and coming this far with me. ❤️',
+              )
+            "
+          >
+            <div class="flower-icon">🌺</div>
+            <div class="serif" style="color: var(--accent-pink)">Love</div>
+          </div>
+        </div>
+
+        <!-- LOVE REASONS -->
+        <div class="section-header">
+          <span class="section-tag serif">reasons why I love you</span>
+          <h2 class="section-title serif">Why I Love You</h2>
+        </div>
+        <div class="reason-box">
+          <div class="reason-text serif" id="reason-display">
+            Click the button below to see why! 💖
+          </div>
+          <button class="btn-action" onclick="generateReason()">
+            ✨ Why Do I Love You?
+          </button>
+        </div>
+
+        <!-- COUPONS -->
+        <div class="section-header">
+          <span class="section-tag serif">special vouchers for you</span>
+          <h2 class="section-title serif">E-Coupons & Gifts</h2>
+        </div>
+        <div class="coupon-card">
+          <div>
+            <div style="font-weight: 600; font-size: 0.9rem">
+              Special Date Coupon
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-sub)">
+              We're free to plan our sightseeing itinerary for today.
+            </div>
+          </div>
+          <button class="coupon-btn" onclick="claimCoupon(this)">Claim</button>
+        </div>
+        <div class="coupon-card">
+          <div>
+            <div style="font-weight: 600; font-size: 0.9rem">
+              Free Hug Voucher
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-sub)">
+              Valid anytime you're tired.
+            </div>
+          </div>
+          <button class="coupon-btn" onclick="claimCoupon(this)">Claim</button>
+        </div>
+        <div class="coupon-card">
+          <div>
+            <div style="font-weight: 600; font-size: 0.9rem">
+              "Granting Your Wishes" Voucher
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-sub)">
+              One special request, not to be disputed.
+            </div>
+          </div>
+          <button class="coupon-btn" onclick="claimCoupon(this)">Claim</button>
+        </div>
+
+        <!-- PHOTOBOOTH DENGAN TEMA WARNA & BINGKAI LENGKAP -->
+        <div class="section-header">
+          <span class="section-tag serif">our moment studio</span>
+          <h2 class="section-title serif">Studio Photobooth</h2>
+        </div>
+
+        <div class="photobooth-box">
+          <!-- Layout Selection -->
+          <div class="selector-group">
+            <label class="selector-label">1. Choose Frame Layout:</label>
+            <select
+              id="pb-layout-select"
+              class="pb-select"
+              onchange="changePhotoboothStyle()"
+            >
+              <option value="layout-strip">3-Frame Vertical Strip</option>
+              <option value="layout-grid">4-Frame Grid (2x2)</option>
+              <option value="layout-polaroid">1-Frame Classic Polaroid</option>
+            </select>
+          </div>
+
+          <!-- Theme Selection -->
+          <div class="selector-group">
+            <label class="selector-label">2. Choose Aesthetics Theme:</label>
+            <select
+              id="pb-theme-select"
+              class="pb-select"
+              onchange="changePhotoboothStyle()"
+            >
+              <option value="stamp">
+                💌 Perangko Pos (Blue Stamp & Stickers)
+              </option>
+              <option value="flight">
+                ✈️ Flight Ticket (Boarding Pass Theme)
+              </option>
+              <option value="spiderman">
+                🕷️ Marvel / Spider-Man (Red & Navy)
+              </option>
+              <option value="coquette">
+                🌸 Beads & Ribbon (Coquette / Soft Pink)
+              </option>
+              <option value="vintage">
+                🎞️ Retro Film & Timestamp ('90s Dark Coffee)
+              </option>
+              <option value="korean">
+                🌿 Korean Minimalist (Sage Green & Butter)
+              </option>
+            </select>
+          </div>
+
+          <video
+            id="webcam"
+            class="camera-preview"
+            autoplay
+            playsinline
+          ></video>
+          <div class="timer-badge" id="pb-timer">3</div>
+
+          <!-- Photostrip Container -->
+          <div class="photobooth-strip layout-strip" id="pb-strip">
+            <div class="frame-wrapper" id="wrap1">
+              <div class="frame-decor-tl decor-tl">💌</div>
+              <div class="frame-decor-tr decor-tr">🌸</div>
+              <img id="frame1" src="" alt="Frame 1" />
+              <div class="frame-decor-bl decor-bl">✨</div>
+              <div class="frame-decor-br decor-br">🎈</div>
+            </div>
+
+            <div class="frame-wrapper" id="wrap2">
+              <div class="frame-decor-tl decor-tl">💌</div>
+              <div class="frame-decor-tr decor-tr">🌸</div>
+              <img id="frame2" src="" alt="Frame 2" />
+              <div class="frame-decor-bl decor-bl">✨</div>
+              <div class="frame-decor-br decor-br">🎈</div>
+            </div>
+
+            <div class="frame-wrapper" id="wrap3">
+              <div class="frame-decor-tl decor-tl">💌</div>
+              <div class="frame-decor-tr decor-tr">🌸</div>
+              <img id="frame3" src="" alt="Frame 3" />
+              <div class="frame-decor-bl decor-bl">✨</div>
+              <div class="frame-decor-br decor-br">🎈</div>
+            </div>
+
+            <div class="frame-wrapper" id="wrap4" style="display: none">
+              <div class="frame-decor-tl decor-tl">💌</div>
+              <div class="frame-decor-tr decor-tr">🌸</div>
+              <img id="frame4" src="" alt="Frame 4" />
+              <div class="frame-decor-bl decor-bl">✨</div>
+              <div class="frame-decor-br decor-br">🎈</div>
+            </div>
+
+            <div class="photobooth-footer-text" id="pb-footer-txt">
+              LOVE & CELEBRATION 💌
+            </div>
+          </div>
+
+          <button
+            class="btn-snap"
+            id="start-pb-btn"
+            onclick="startPhotobooth()"
+          >
+            📸 Start Photobooth Session
+          </button>
+          <button
+            class="btn-download"
+            id="download-pb-btn"
+            onclick="downloadPhotoboothStrip()"
+          >
+            💾 Save Photostrip Image
+          </button>
+        </div>
+
+        <!-- GALLERY -->
+        <div class="section-header">
+          <span class="section-tag serif">beautiful pictures</span>
+          <h2 class="section-title serif">Your Beautiful Pictures</h2>
+        </div>
+        <div class="gallery-grid">
+          <div class="photo-card">
+            <img src="" alt="Photo 1" />
+            <div class="photo-caption serif">still my favorite smile ❤️</div>
+          </div>
+          <div class="photo-card">
+            <img src="" alt="Photo 2" />
+            <div class="photo-caption serif">no reason, just love 🌸</div>
+          </div>
+        </div>
+
+        <!-- REPLY FORM -->
+        <div class="section-header">
+          <span class="section-tag serif">leave a message for me</span>
+          <h2 class="section-title serif">Send a Reply</h2>
+        </div>
+        <div class="reply-box">
+          <textarea
+            id="reply-input"
+            class="reply-textarea"
+            placeholder="Write your thoughts or wishes here, my love... ❤️"
+          ></textarea>
+          <button
+            class="btn-action"
+            onclick="sendWhatsAppReply('6285643124688')"
+          >
+            📲 Send Reply via WhatsApp
+          </button>
+        </div>
+
+        <div class="footer">
+          <p class="sub-text">Always yours,</p>
+          <div class="footer-sig serif">With Love ❤️</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL -->
+    <div class="modal" id="info-modal">
+      <div class="modal-content">
+        <h3
+          class="serif"
+          id="modal-title"
+          style="
+            color: var(--accent-pink);
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+          "
+        >
+          Title
+        </h3>
+        <p
+          id="modal-body"
+          style="font-size: 0.85rem; line-height: 1.6; color: var(--text-dark)"
+        ></p>
+        <button class="modal-btn" onclick="closeModal()">Close ❤️</button>
+      </div>
+    </div>
+
+    <!-- HIDDEN CANVAS -->
+    <canvas id="hidden-canvas" style="display: none"></canvas>
+
+    <script>
+      const CORRECT_PIN = "221004";
+      let inputPin = "";
+      const startDate = new Date(2018, 7, 31);
+
+      function playFeedback() {
+        if (navigator.vibrate) navigator.vibrate(25);
+      }
+
+      function updateDots() {
+        const dots = document.querySelectorAll(".dot");
+        dots.forEach((dot, index) => {
+          if (index < inputPin.length) dot.classList.add("active");
+          else dot.classList.remove("active");
+        });
+      }
+
+      function pressKey(num) {
+        playFeedback();
+        if (inputPin.length < 6) {
+          inputPin += num;
+          updateDots();
+          if (inputPin.length === 6) checkPin();
+        }
+      }
+
+      function clearPin() {
+        playFeedback();
+        inputPin = "";
+        updateDots();
+        document.getElementById("error-msg").innerText = "";
+      }
+      function deleteKey() {
+        playFeedback();
+        inputPin = inputPin.slice(0, -1);
+        updateDots();
+      }
+
+      function checkPin() {
+        if (inputPin === CORRECT_PIN) {
+          document.getElementById("pin-screen").style.display = "none";
+          document.getElementById("gift-screen").style.display = "flex";
+        } else {
+          document.getElementById("error-msg").innerText =
+            "Wrong PIN—remember our special date! ❤️";
+          setTimeout(clearPin, 1000);
+        }
+      }
+
+      function openGift() {
+        playFeedback();
+        const music = document.getElementById("bg-music");
+        music.play().catch((e) => console.log("Audio blocked"));
+
+        let duration = 3 * 1000;
+        let end = Date.now() + duration;
+
+        (function frame() {
+          confetti({
+            particleCount: 3,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0 },
+            colors: ["#ec407a", "#f48fb1", "#ffffff"],
+          });
+          confetti({
+            particleCount: 3,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1 },
+            colors: ["#ec407a", "#f48fb1", "#ffffff"],
+          });
+          if (Date.now() < end) requestAnimationFrame(frame);
+        })();
+
+        document.getElementById("gift-screen").style.display = "none";
+        document.getElementById("content-screen").style.display = "block";
+        startCounter();
+        changePhotoboothStyle();
+      }
+
+      function toggleMusic() {
+        playFeedback();
+        const music = document.getElementById("bg-music");
+        const btn = document.getElementById("play-toggle");
+        if (music.paused) {
+          music.play();
+          btn.innerText = "⏸";
+        } else {
+          music.pause();
+          btn.innerText = "▶";
+        }
+      }
+
+      function toggleTimeline(card) {
+        playFeedback();
+        const isActive = card.classList.contains("active");
+        document
+          .querySelectorAll(".timeline-card")
+          .forEach((item) => item.classList.remove("active"));
+        if (!isActive) card.classList.add("active");
+      }
+
+      function startCounter() {
+        setInterval(() => {
+          const now = new Date();
+          const diff = now - startDate;
+          document.getElementById("cnt-days").innerText = Math.floor(
+            diff / (1000 * 60 * 60 * 24),
+          );
+          document.getElementById("cnt-hours").innerText = Math.floor(
+            (diff / (1000 * 60 * 60)) % 24,
+          );
+          document.getElementById("cnt-mins").innerText = Math.floor(
+            (diff / (1000 * 60)) % 60,
+          );
+          document.getElementById("cnt-secs").innerText = Math.floor(
+            (diff / 1000) % 60,
+          );
+        }, 1000);
+      }
+
+      /* CONFIG TEMA WARNA & BINGKAI KHUSUS */
+      const themeConfig = {
+        stamp: {
+          bg: "#e1f5fe",
+          border: "#0288d1",
+          text: "#01579b",
+          font: "'Poppins', sans-serif",
+          footer: "LOVE & CELEBRATION ✉️",
+          stickers: { tl: "✉️", tr: "🌸", bl: "✨", br: "🎈" },
+          styleType: "scallop",
+        },
+        flight: {
+          bg: "#ffffff",
+          border: "#1976d2",
+          text: "#0d47a1",
+          font: "'VT323', monospace",
+          footer: "FLIGHT NO. 2018 ✈️ SEAT A1",
+          stickers: { tl: "✈️", tr: "🎫", bl: "☁️", br: "🧳" },
+          styleType: "ticket",
+        },
+        spiderman: {
+          bg: "#1a0003",
+          border: "#e50914",
+          text: "#ff2a2a",
+          font: "'Press Start 2P', monospace",
+          footer: "My Peter Parker & MJ 🕷️",
+          stickers: { tl: "🕷️", tr: "🕸️", bl: "💥", br: "⚡" },
+          styleType: "standard",
+        },
+        coquette: {
+          bg: "#fff0f5",
+          border: "#f48fb1",
+          text: "#d81b60",
+          font: "'Cormorant Garamond', serif",
+          footer: "My Beloved & Me 🎀",
+          stickers: { tl: "🎀", tr: "✨", bl: "💖", br: "🌸" },
+          styleType: "standard",
+        },
+        vintage: {
+          bg: "#2b2625",
+          border: "#8d6e63",
+          text: "#ffb74d",
+          font: "'VT323', monospace",
+          footer: "EST. 2018 - '90s VIBES 🎞️",
+          stickers: { tl: "🎞️", tr: "📽️", bl: "📷", br: "⏳" },
+          styleType: "sprocket",
+        },
+        korean: {
+          bg: "#f1f8e9",
+          border: "#c5e1a5",
+          text: "#558b2f",
+          font: "'Poppins', sans-serif",
+          footer: "soft moments together 🌿",
+          stickers: { tl: "🌿", tr: "🌼", bl: "🌱", br: "☕" },
+          styleType: "standard",
+        },
+      };
+
+      function changePhotoboothStyle() {
+        const layout = document.getElementById("pb-layout-select").value;
+        const themeKey = document.getElementById("pb-theme-select").value;
+        const strip = document.getElementById("pb-strip");
+        const footerTxt = document.getElementById("pb-footer-txt");
+        const theme = themeConfig[themeKey];
+
+        strip.className = `photobooth-strip ${layout}`;
+
+        strip.style.setProperty("--pb-bg", theme.bg);
+        strip.style.setProperty("--pb-border", theme.border);
+        strip.style.setProperty("--pb-text", theme.text);
+        strip.style.setProperty("--pb-font", theme.font);
+        footerTxt.innerText = theme.footer;
+
+        document
+          .querySelectorAll(".decor-tl")
+          .forEach((el) => (el.innerText = theme.stickers.tl));
+        document
+          .querySelectorAll(".decor-tr")
+          .forEach((el) => (el.innerText = theme.stickers.tr));
+        document
+          .querySelectorAll(".decor-bl")
+          .forEach((el) => (el.innerText = theme.stickers.bl));
+        document
+          .querySelectorAll(".decor-br")
+          .forEach((el) => (el.innerText = theme.stickers.br));
+
+        const w2 = document.getElementById("wrap2");
+        const w3 = document.getElementById("wrap3");
+        const w4 = document.getElementById("wrap4");
+
+        if (layout === "layout-polaroid") {
+          w2.style.display = "none";
+          w3.style.display = "none";
+          w4.style.display = "none";
+        } else if (layout === "layout-grid") {
+          w2.style.display = "block";
+          w3.style.display = "block";
+          w4.style.display = "block";
+        } else {
+          w2.style.display = "block";
+          w3.style.display = "block";
+          w4.style.display = "none";
+        }
+      }
+
+      async function startPhotobooth() {
+        playFeedback();
+        const video = document.getElementById("webcam");
+        const btn = document.getElementById("start-pb-btn");
+        const downloadBtn = document.getElementById("download-pb-btn");
+        const timerBadge = document.getElementById("pb-timer");
+        const layout = document.getElementById("pb-layout-select").value;
+
+        let photoCount = 3;
+        if (layout === "layout-polaroid") photoCount = 1;
+        if (layout === "layout-grid") photoCount = 4;
+
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: "user" },
+            audio: false,
+          });
+          video.srcObject = stream;
+          video.style.display = "block";
+          btn.style.display = "none";
+          downloadBtn.style.display = "none";
+
+          for (let i = 1; i <= photoCount; i++) {
+            await countdown(timerBadge, 3);
+            snapToFrame(`frame${i}`, video);
+            confetti({ particleCount: 20, spread: 40 });
+          }
+
+          stream.getTracks().forEach((track) => track.stop());
+          video.style.display = "none";
+          btn.style.display = "block";
+          btn.innerText = "🔄 Retake Session";
+          downloadBtn.style.display = "block";
+          timerBadge.style.display = "none";
+        } catch (err) {
+          alert("Camera permission is required to take couple photos! ❤️");
+        }
+      }
+
+      function countdown(element, seconds) {
+        return new Promise((resolve) => {
+          element.style.display = "block";
+          let count = seconds;
+          element.innerText = count;
+
+          let interval = setInterval(() => {
+            count--;
+            if (count > 0) {
+              element.innerText = count;
+            } else {
+              clearInterval(interval);
+              element.innerText = "📸 Smile!";
+              setTimeout(() => resolve(), 600);
+            }
+          }, 1000);
+        });
+      }
+
+      function snapToFrame(frameId, video) {
+        const canvas = document.getElementById("hidden-canvas");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        document.getElementById(frameId).src = canvas.toDataURL("image/png");
+      }
+
+      /* PENGGAMBARAN DENGAN BINGKAI UNIK (PERANGKO, TIKET, SPIDER-MAN, DLL) */
+      function downloadPhotoboothStrip() {
+        playFeedback();
+        const canvas = document.getElementById("hidden-canvas");
+        const ctx = canvas.getContext("2d");
+        const layout = document.getElementById("pb-layout-select").value;
+        const themeKey = document.getElementById("pb-theme-select").value;
+        const theme = themeConfig[themeKey];
+
+        const canvasWidth = 600;
+        const padding = 35;
+        let canvasHeight = 1380;
+
+        const f1 = document.getElementById("frame1");
+        const f2 = document.getElementById("frame2");
+        const f3 = document.getElementById("frame3");
+        const f4 = document.getElementById("frame4");
+
+        if (layout === "layout-polaroid") {
+          canvasHeight = 720;
+        } else if (layout === "layout-grid") {
+          canvasHeight = 920;
+        } else {
+          canvasHeight = 1380;
+        }
+
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+
+        // Fill Latar Belakang Sesuai Warna Tema
+        ctx.fillStyle = layout === "layout-polaroid" ? "#ffffff" : theme.bg;
+        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+        // Fungsi Menggambar Foto Beserta Bingkai Khusus Tema (Perangko / Tiket / Dll)
+        function drawThemedPhoto(img, x, y, width, height) {
+          if (!img || !img.src || img.src === "") return;
+
+          ctx.drawImage(img, x, y, width, height);
+
+          // Efek Pinggiran Perangko (Garis Bergerigi / Scalloped Edge)
+          if (theme.styleType === "scallop") {
+            ctx.strokeStyle = theme.border;
+            ctx.lineWidth = 6;
+            ctx.setLineDash([8, 8]);
+            ctx.strokeRect(x - 4, y - 4, width + 8, height + 8);
+            ctx.setLineDash([]);
+          } else {
+            ctx.strokeStyle = theme.border;
+            ctx.lineWidth = 4;
+            ctx.strokeRect(x, y, width, height);
+          }
+
+          // Stiker di 4 Sudut Bingkai Foto
+          ctx.font = '24px "Segoe UI Emoji", sans-serif';
+          ctx.textAlign = "center";
+          ctx.fillText(theme.stickers.tl, x + 20, y + 28);
+          ctx.fillText(theme.stickers.tr, x + width - 20, y + 28);
+          ctx.fillText(theme.stickers.bl, x + 20, y + height - 12);
+          ctx.fillText(theme.stickers.br, x + width - 20, y + height - 12);
+        }
+
+        // Ornamen Khusus Tema Latar
+        if (themeKey === "spiderman") {
+          ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.lineTo(150, 150);
+          ctx.moveTo(canvasWidth, 0);
+          ctx.lineTo(canvasWidth - 150, 150);
+          ctx.stroke();
+        } else if (themeKey === "vintage") {
+          ctx.fillStyle = "#110d0c";
+          for (let pos = 20; pos < canvasHeight; pos += 45) {
+            ctx.fillRect(8, pos, 14, 25);
+            ctx.fillRect(canvasWidth - 22, pos, 14, 25);
+          }
+        } else if (themeKey === "flight") {
+          // Garis Putus Tiket Pesawat
+          ctx.strokeStyle = "#1976d2";
+          ctx.lineWidth = 2;
+          ctx.setLineDash([10, 10]);
+          ctx.beginPath();
+          ctx.moveTo(0, canvasHeight - 90);
+          ctx.lineTo(canvasWidth, canvasHeight - 90);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+
+        // Render Foto Ke Canvas
+        if (layout === "layout-polaroid") {
+          drawThemedPhoto(f1, padding, padding, canvasWidth - padding * 2, 520);
+        } else if (layout === "layout-grid") {
+          const w = (canvasWidth - padding * 3) / 2;
+          const h = 330;
+          drawThemedPhoto(f1, padding, padding, w, h);
+          drawThemedPhoto(f2, padding * 2 + w, padding, w, h);
+          drawThemedPhoto(f3, padding, padding * 2 + h, w, h);
+          drawThemedPhoto(f4, padding * 2 + w, padding * 2 + h, w, h);
+        } else {
+          const photoH = 360;
+          const w = canvasWidth - padding * 2;
+          drawThemedPhoto(f1, padding, padding, w, photoH);
+          drawThemedPhoto(f2, padding, padding * 2 + photoH, w, photoH);
+          drawThemedPhoto(f3, padding, padding * 3 + photoH * 2, w, photoH);
+        }
+
+        // Bingkai Luar
+        ctx.strokeStyle = theme.border;
+        ctx.lineWidth = 10;
+        ctx.strokeRect(5, 5, canvasWidth - 10, canvasHeight - 10);
+
+        // Teks Footer
+        ctx.fillStyle = theme.text;
+        ctx.font = `28px ${theme.font}`;
+        ctx.textAlign = "center";
+        ctx.fillText(theme.footer, canvasWidth / 2, canvasHeight - 35);
+
+        // Unduh Berkas
+        const link = document.createElement("a");
+        link.download = `Photobooth-${themeKey}.png`;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+        confetti({ particleCount: 50, spread: 60 });
+      }
+
+      /* REASON & OTHER LOGIC */
+      function bloomFlower(card, animClass, title, body) {
+        playFeedback();
+        const flower = card.querySelector(".flower-icon").innerText;
+        card.className = "flower-card";
+        card.querySelectorAll(".bloom-particle").forEach((p) => p.remove());
+        void card.offsetWidth;
+        card.classList.add(animClass);
+
+        for (let index = 0; index < 8; index++) {
+          const particle = document.createElement("span");
+          particle.className = "bloom-particle";
+          particle.innerText = flower;
+          particle.style.setProperty(
+            "--x",
+            `${Math.cos((index * Math.PI) / 4) * 54}px`,
+          );
+          particle.style.setProperty(
+            "--y",
+            `${Math.sin((index * Math.PI) / 4) * 58 - 12}px`,
+          );
+          particle.style.setProperty("--rotate", `${index * 45 - 25}deg`);
+          particle.style.setProperty("--delay", `${index * 0.025}s`);
+          particle.addEventListener("animationend", () => particle.remove());
+          card.appendChild(particle);
+        }
+        setTimeout(() => {
+          openModal(title, body);
+        }, 350);
+      }
+
+      function openModal(title, body) {
+        document.getElementById("modal-title").innerText = title;
+        document.getElementById("modal-body").innerText = body;
+        document.getElementById("info-modal").style.display = "flex";
+      }
+
+      function closeModal() {
+        playFeedback();
+        document.getElementById("info-modal").style.display = "none";
+      }
+
+      const reasons = [
+        "Your smile always manages to turn my exhausting days into peace. ❤️",
+        "You're always patient and eager to grow together with me.",
+        "The way you care and pay attention to the little things is incredible.",
+        "With you, I don't have to pretend and can be completely myself.",
+        "Your laughter is my favorite sound to hear.",
+        "You are the person I love most in this world.",
+      ];
+
+      function generateReason() {
+        playFeedback();
+        const randomReason =
+          reasons[Math.floor(Math.random() * reasons.length)];
+        document.getElementById("reason-display").innerText =
+          `"${randomReason}"`;
+        confetti({ particleCount: 15, spread: 30 });
+      }
+
+      function claimCoupon(btn) {
+        playFeedback();
+        btn.innerText = "Claimed ✔";
+        btn.classList.add("claimed");
+        btn.disabled = true;
+        confetti({ particleCount: 40, spread: 50 });
+      }
+
+      function sendWhatsAppReply(phoneNumber) {
+        playFeedback();
+        const text = document.getElementById("reply-input").value;
+        if (!text.trim()) {
+          alert("Please write your reply first, my love! ❤️");
+          return;
+        }
+        const encodedText = encodeURIComponent(
+          `Hi sweetheart! Here is my reply from the birthday website: "${text}"`,
+        );
+        window.open(
+          `https://wa.me/${phoneNumber}?text=${encodedText}`,
+          "_blank",
+        );
+      }
+    </script>
+  </body>
+</html>
